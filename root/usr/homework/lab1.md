@@ -1,30 +1,34 @@
 #Lab 1
 //By Dong
+//2016.03.05
 
-##Code Analysis
+###实验设计思路
+首先建立中断向量，以中断函数实现对中断响应，注意在中断处理是保存上下文信息。
+设定中断跳转地址，打开中断响应。
 
-###stmr(1000)
-首先通过stmr函数调用TIME指令，同时设置时钟终止时间为1000。之后在时钟时间终止之前，时钟会一直出发中断。
+###Code Analysis
+下面挑取实现过程中的主要代码进行解释。
 
-###ivec(alltraps)
+####stmr(1000)
+首先通过stmr函数调用TIME指令，同时设置时钟终止时间为1000。
+
+####ivec(alltraps)
 然后调用IVEC指令，设定中断向量地址。中断向量调用函数为alltraps。
 
-###alltraps()
+####alltraps()
 alltraps函数为中断处理函数，函数首先将通用寄存器a, b入栈，然后执行中断操作，给全局变量current值加1。
 而后恢复寄存器，调用中断返回命令RTI，结束中断。
 
-###STI
+####STI
 而后调用STI指令打开中断，使CPU能够接受中断。
 
-###while
+####while
 接下来的这个while函数，其实是为了检测中断触发的状况，中断每被触发一次，current值就加1，这样输出也就变化一次。
 
-###out(port, val)
+####out(port, val)
 out函数中，首先将两个参数分别加载到a,b寄存器，而后执行BOUT指令。
 为什么发生在内核态？？？
 
-###halt
+####halt
 最后halt函数调用系统HALT命令，停止系统。
 
-##Related OS Knowledge:
-中断处理。
