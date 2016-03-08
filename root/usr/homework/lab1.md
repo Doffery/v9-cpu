@@ -12,6 +12,8 @@
 ####stmr(1000)
 首先通过stmr函数调用TIME指令，同时设置时钟终止时间为1000。
 
+在v9 cpu中可以通过TIME指令传入时钟终止时间，传入后以timeout值进行记录。并且以一个timer参数来记录当前所在时间，每执行一次CPU指令都给timer增加delta的时间，直到timer记录的时间，超过时钟终止时间为停。
+
 ####ivec(alltraps)
 然后调用IVEC指令，设定中断向量地址。中断向量调用函数为alltraps。
 
