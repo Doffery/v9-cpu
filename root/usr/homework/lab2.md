@@ -22,7 +22,7 @@
 
 	PTE_W，表示当前页可写
 
-	PTE_U，表示user mode可用，(v9默认出于内核态)
+	PTE_U，表示user mode可用，(v9默认处于内核态)
 
 而后通过PDIR指令设定页目标表起始地址，再通过SPAG命令打开页机制。
 
