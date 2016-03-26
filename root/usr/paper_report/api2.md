@@ -19,8 +19,6 @@
 
 最后将MCS Lock应用到Linux系统中去，比较了**FOPS, MEMPOP, PFIND & EXIM**四个指令的performance。
 
-
-
 ###论文实验分析
 本篇论文和以往看的论文不一样，开篇就给出了一部分实验。目的是说了说明多核lock问题的重要性。
 
@@ -50,10 +48,17 @@
 ##Scalable Kernel TCP Design and Implementation for Short-Lived Connections
 
 ###论文内容概括
+实现了一个可拓展的TCP Socket设计，实现了table-level partition，并且对passive和active连接都实现了connection locality。
+在24核时，有效提高了系统的tcp吞吐量。
 
 ###论文内容介绍
+首先介绍论文主要面临的三个挑战。
++ 为了解决Global  Listen Table和Global Established Table的共享问题的table-level partition
++ 如何实现完全的connection locality
++ 如何能够使实际好的socket结构，兼容BSD socket api。
 
 ###论文实验
+
 
 ###论文贡献点
 
