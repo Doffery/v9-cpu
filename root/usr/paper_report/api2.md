@@ -42,8 +42,6 @@
 
 而且在若进程的lock占用时间较长问题没有这么明显。使用有效的并行程序设计技术应该可以有效缓解问题。
 
-###论文建议
-？？？
 
 ##Scalable Kernel TCP Design and Implementation for Short-Lived Connections
 
@@ -56,13 +54,26 @@
 + 为了解决Global  Listen Table和Global Established Table的共享问题的table-level partition
 + 如何实现完全的connection locality
 + 如何能够使实际好的socket结构，兼容BSD socket api。
+而后针对以上几点，分别介绍了文章是如何实现的。
+
+Partition table主要解决不正常情况local table丢失的问题，这时使用Global table来建立连接。
+
+添加Recieve Flow Deliver模块解决connection locality问题。
+
+在结构的最上层添加Fastsocket-aware VFS，来实现对socket api的支持，并且介绍一些与正常文件不同所造成的overhead。
 
 ###论文实验
+Fastsocket与 HAProxy/nginx组合与Linux做TCP connection性能对比。
 
+有没有考虑 HAProxy/nginx带来的性能提升？？？
 
 ###论文贡献点
+设计的核网络栈机制能够有效利用多核，并与应用程序有很好的兼容性。
+
+现实实验分析证明了机制的有效性。
 
 ###论文问题和可拓展性
+HAProxy/nginx会带来的性能提升吗，相比linux。
 
-###论文建议
+和其他优化TCP Stack的方案性能对比呢？
 
