@@ -8,7 +8,7 @@
 和mTCP解决的相同的问题，解决现有操作系统对短连接，短消息和多核处理不够好的问题：
 +	system call overhead
 +	shared listenng socket
-+	file abstraction？？？
++	file abstraction
 
 ###设计内容：MegaPipe
 MegaPipe同时需要更改user-space library和linux内核，同时应用程序也需要根据api做调整。
