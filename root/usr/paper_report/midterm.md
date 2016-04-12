@@ -5,6 +5,11 @@
 ##MegaPipe: A New Programming Interface for Scalable Network I/O
 
 ###文章研究的问题
+
+
+----------
+
+
 和mTCP解决的相同的问题，解决现有操作系统对短连接，短消息和多核处理不够好的问题：
 1.	system call overhead
 2.	shared listenng socket
@@ -13,6 +18,11 @@
 其中123，mTCP均有解决，并且23采用的技术和这篇文章不同；FastSocket也解决了23，并且更elegant。
 
 ###设计内容：MegaPipe
+
+
+----------
+
+
 MegaPipe同时需要更改user-space library和linux内核，同时应用程序也需要根据api做调整。
 
 ####引入了channel
@@ -47,6 +57,11 @@ channel是一个抽象的概念，表示core与user之间的通信与其他core�
 在mTCP这个由mTCP thread来解决，而FastSocket没有解决这个问题。
 
 ###实现
+
+
+----------
+
+
 主要有三个部分：Kernel， User-level library和application modification。
 
 Kernel更改主要是对I/O操作的MegaPipe支持，主要是lwsocket，batch I/O command还有event queue。增加了一个module 1800行左右，并且更改了系统内核400行左右。
@@ -62,22 +77,42 @@ Library只是kernel module的一个包装，400行代码。
 这个兼容性比mTCP和FastSocket都要差。
 
 ###实验
+
+
+----------
+
+
 首先实验分析了MegaPipe对多核、不同长度消息的可拓展性，而后针对memcached和nginx做了实验分析。
 
 其中有一点就是，多核性能比较时，有一个图性能提升不大，论文分析为由于系统锁和cache的congestion原因，但是文章却没有继续深入解决，是一个遗憾。
 
 ###论文优点
+
+
+----------
+
+
 实现了partitioned listening sockets，改善了多核共享listening socket的问题。
 
 实现lwsocket，脱离出VPS，直接指向TCB，避免了和VPS的全局同步。
 
 对System Call进行Batch处理，提高了性能。
 ###论文缺点
+
+
+----------
+
+
 不仅仅需要更改内核，还需要更改应用程序。
 
 现在仅支持event-driven server，对thread-based性能提升有待验证。
 
 ###对比mTCP&Fastsocket
+
+
+----------
+
+
 mTCP的优势是越过了kernel，还有batched的packet处理（？？？），因此快。
 
 Fastsocket的优势：
@@ -87,6 +122,11 @@ Fastsocket的优势：
 lightweight socket虽然导致兼容性问题，但却有性能提升，并且能够tranfer到正常的socket。
 
 ###论文评价
+
+
+----------
+
+
 在12年实现出这篇文章，并且同时考虑listening socket共享，batch还有lightweight socket
 1. Shared resources
 2. Broken locality
