@@ -6,9 +6,11 @@
 
 ###文章研究的问题
 和mTCP解决的相同的问题，解决现有操作系统对短连接，短消息和多核处理不够好的问题：
-+	system call overhead
-+	shared listenng socket
-+	file abstraction
+1.	system call overhead
+2.	shared listenng socket
+3.	file abstraction
+
+其中123，mTCP均有解决，并且23采用的技术和这篇文章不同；FastSocket也解决了23，并且更elegant。
 
 ###设计内容：MegaPipe
 MegaPipe同时需要更改user-space library和linux内核，同时应用程序也需要根据api做调整。
@@ -22,6 +24,8 @@ channel是一个抽象的概念，表示core与user之间的通信与其他core�
 
 和轮训检查是否有package不同，这里采用completion notification model。Kernel采用notification的形式将command结果返回给应用程序。
 
+和mTCP&FastSocket vertically划分的概念很相似。
+
 ####设计了Lightweight Socket
 原有的socket为了兼容VFS，采用和全局文件共享的FD方式，但是TCP中socket有两个特点：
 + 很少共享
@@ -33,10 +37,14 @@ channel是一个抽象的概念，表示core与user之间的通信与其他core�
 
 并且，如果程序指定，MegaPipe可以将lwsocket转化成普通的socket。
 
+而mTCP有了自己user-level的socket，FastSocket不仅更轻量，还解决了这个导致的兼容性问题。
+
 ####将System Call按batch方式处理
 因此system call处理总需要进行mode之间的切换，这会造成很大的时间消耗。因此对system call进行batch处理，可以提升性能。
 
 在MegaPipe中，这部分操作都是由user-level的library来做的，对application来讲是透明的。
+
+在mTCP这个由mTCP thread来解决，而FastSocket没有解决这个问题。
 
 ###实现
 主要有三个部分：Kernel， User-level library和application modification。
@@ -51,8 +59,12 @@ Library只是kernel module的一个包装，400行代码。
 
 >in "event driven" runtimes, when request comes in, the event is dispatched and handler will pick it up. When? In Node.js, there is an "event loop" which basically loops over all the pieces of code that need to be executed and executes them one by one. So the handler will handle the event once event loop invokes it. The important thing here is that all the handlers are being called in the same thread - event loop doesn't have a thread pool to use, it only has one thread.
 
+这个兼容性比mTCP和FastSocket都要差。
+
 ###实验
 首先实验分析了MegaPipe对多核、不同长度消息的可拓展性，而后针对memcached和nginx做了实验分析。
+
+其中有一点就是，多核性能比较时，有一个图性能提升不大，论文分析为由于系统锁和cache的congestion原因，但是文章却没有继续深入解决，是一个遗憾。
 
 ###论文优点
 实现了partitioned listening sockets，改善了多核共享listening socket的问题。
@@ -79,5 +91,6 @@ lightweight socket虽然导致兼容性问题，但却有性能提升，并且�
 1. Shared resources
 2. Broken locality
 3. Per packet processing
+
 
 这三个方面的优化都考虑到了比较难得。
